@@ -130,49 +130,15 @@ int main(void)
         {
             for (i = 0; i < 5; i++)
             {
-                k = i - 1;
-                if (k < 0)
-                {
-                    k = 5 - 1;
-                }
-                if (j == 0 && i == 0)
-                {
-                    HAL_ADC_Start(&hadc1);
-                    while (__HAL_ADC_GET_FLAG(&hadc1, ADC_FLAG_EOC) == RESET)
-                    {
-                        NULL;
-                    };
-                    ADC_Value                = HAL_ADC_GetValue(&hadc1);
-                    ADC[i]                   = ADC_Value;
-                    voltage[i]               = ADC_Value * 0.00028089887;
-                    voltage_x_voltage_sum[i] = voltage_x_voltage_sum[i] + voltage[i] * voltage[i];
-                }
-                else if (j == 500 - 1 && i == 5 - 1)
-                {
-                    voltage[k]               = ADC_Value * 0.00028089887;
-                    voltage_x_voltage_sum[k] = voltage_x_voltage_sum[k] + voltage[k] * voltage[k];
-                    HAL_ADC_Start(&hadc1);
-                    while (__HAL_ADC_GET_FLAG(&hadc1, ADC_FLAG_EOC) == RESET)
-                    {
-                        NULL;
-                    };
-                    ADC_Value                = HAL_ADC_GetValue(&hadc1);
-                    ADC[i]                   = ADC_Value;
-                    voltage[i]               = ADC_Value * 0.00028089887;
-                    voltage_x_voltage_sum[i] = voltage_x_voltage_sum[i] + voltage[i] * voltage[i];
-                }
-                else
-                {
-                    voltage[k]               = ADC_Value * 0.00028089887;
-                    voltage_x_voltage_sum[k] = voltage_x_voltage_sum[k] + voltage[k] * voltage[k];
-                    HAL_ADC_Start(&hadc1);
-                    while (__HAL_ADC_GET_FLAG(&hadc1, ADC_FLAG_EOC) == RESET)
-                    {
-                        NULL;
-                    };
-                    ADC_Value = HAL_ADC_GetValue(&hadc1);
-                }
+                HAL_ADC_Start(&hadc1);
+                HAL_ADC_PollForConversion(&hadc1, 0xffff);
+                ADC_Value                = HAL_ADC_GetValue(&hadc1);
+                ADC[i]                   = ADC_Value;
+                voltage[i]               = ADC_Value * 0.00028089887;
+                voltage_x_voltage_sum[i] = voltage_x_voltage_sum[i] + voltage[i] * voltage[i];
+                // printf("ADC1 Channel%d Reading : %d, Voltage value :%.4f\r\n", i, ADC_Value, ADC_Value * 3.3f / 4096);
             }
+            // printf("%d,%d,%d,%d,%d,gesture=%d\n",ADC[0],ADC[1],ADC[2],ADC[3],ADC[4],gesture);
             HAL_ADC_Stop(&hadc1);
         }
         gesture = 5;
