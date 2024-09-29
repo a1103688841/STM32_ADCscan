@@ -29,6 +29,6 @@ stm32_adcscan\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex
 stm32_adcscan\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h
 stm32_adcscan\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
 stm32_adcscan\main.o: ../Core/Inc/adc.h
-stm32_adcscan\main.o: ../Core/Inc/usart.h
 stm32_adcscan\main.o: ../Core/Inc/gpio.h
+stm32_adcscan\main.o: ../Core/Inc/usart.h
 stm32_adcscan\main.o: C:\Users\liliput\AppData\Local\Keil_v5\ARM\ARMCC\include\stdio.h

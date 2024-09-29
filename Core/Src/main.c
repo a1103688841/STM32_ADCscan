@@ -81,15 +81,18 @@ int fgetc(FILE* f)
  * @brief  The application entry point.
  * @retval int
  */
+uint32_t ADC_Value;
+uint32_t ADC[5];
+float    voltage[5];
+float    voltage_x_voltage[5];
 int main(void)
 {
 
     /* USER CODE BEGIN 1 */
-    uint32_t ADC_Value;
-    uint32_t ADC[5];
-    float    voltage[5];
-    int      i;
-    int      gesture;
+    int i;
+    int j;
+    int k;
+    int gesture;
     /* USER CODE END 1 */
 
     /* MCU Configuration--------------------------------------------------------*/
@@ -123,27 +126,26 @@ int main(void)
         /* USER CODE END WHILE */
 
         /* USER CODE BEGIN 3 */
-
-        for (i = 0; i < 5; i++)
+        for (j = 0; j < 500; j++)
         {
-            HAL_ADC_Start(&hadc1);
-            HAL_ADC_PollForConversion(&hadc1, 0xffff);
-            ADC_Value  = HAL_ADC_GetValue(&hadc1);
-            ADC[i]     = ADC_Value;
-            voltage[i] = ADC_Value * 0.00028089887;
-            // printf("ADC1 Channel%d Reading : %d, Voltage value :%.4f\r\n", i, ADC_Value, ADC_Value * 3.3f / 4096);
-        }
-        gesture = 5;
-        for (i = 0; i < 5; i++)
-        {
-            if (ADC[i] > 2000)
+            for (i = 0; i < 5; i++)
             {
-                gesture--;
+                HAL_ADC_Start(&hadc1);
+                HAL_ADC_PollForConversion(&hadc1, 0xffff);
+                ADC_Value            = HAL_ADC_GetValue(&hadc1);
+                ADC[i]               = ADC_Value;
+                voltage[i]           = ADC_Value * 0.00028089887;
+                voltage_x_voltage[i] = voltage_x_voltage[i] + voltage[i] * voltage[i];
+                // printf("ADC1 Channel%d Reading : %d, Voltage value :%.4f\r\n", i, ADC_Value, ADC_Value * 3.3f / 4096);
             }
+            // printf("%d,%d,%d,%d,%d,gesture=%d\n",ADC[0],ADC[1],ADC[2],ADC[3],ADC[4],gesture);
+            HAL_ADC_Stop(&hadc1);
         }
-        // printf("%d,%d,%d,%d,%d,gesture=%d\n",ADC[0],ADC[1],ADC[2],ADC[3],ADC[4],gesture);
-        printf("%fV,%fV,%fV,%fV,%fV,gesture=%d\n", voltage[0], voltage[1], voltage[2], voltage[3], voltage[4], gesture);
-        HAL_ADC_Stop(&hadc1);
+        printf("%fV,%fV,%fV,%fV,%fV,gesture=%d\n", voltage_x_voltage[0], voltage_x_voltage[1], voltage_x_voltage[2], voltage_x_voltage[3], voltage_x_voltage[4], gesture);
+        for (i = 0; i < 5; i++)
+        {
+            voltage_x_voltage[i] = 0;
+        }
         // HAL_Delay(500);
     }
     /* USER CODE END 3 */
