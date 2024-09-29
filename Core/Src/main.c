@@ -65,7 +65,7 @@ int fputc(int ch, FILE* f)
     return (ch);
 }
 
-// 重定向c库函数scanf到串口USARTx，重写向后可使用scanf、getchar等函�??
+// 重定向c库函数scanf到串口USARTx，重写向后可使用scanf、getchar等函�???
 int fgetc(FILE* f)
 {
     int ch;
@@ -86,7 +86,10 @@ int main(void)
 
     /* USER CODE BEGIN 1 */
     uint32_t ADC_Value;
+    uint32_t ADC[5];
+    float    voltage[5];
     int      i;
+    int      gesture;
     /* USER CODE END 1 */
 
     /* MCU Configuration--------------------------------------------------------*/
@@ -120,19 +123,28 @@ int main(void)
         /* USER CODE END WHILE */
 
         /* USER CODE BEGIN 3 */
+
         for (i = 0; i < 5; i++)
         {
-            HAL_ADC_Start(&hadc1);                  // 启动ADC转换
-            HAL_ADC_PollForConversion(&hadc1, 50);  // 等待转换完成�?50为最大等待时间，单位为ms
-
-            if (HAL_IS_BIT_SET(HAL_ADC_GetState(&hadc1), HAL_ADC_STATE_REG_EOC))
+            HAL_ADC_Start(&hadc1);
+            HAL_ADC_PollForConversion(&hadc1, 0xffff);
+            ADC_Value  = HAL_ADC_GetValue(&hadc1);
+            ADC[i]     = ADC_Value;
+            voltage[i] = ADC_Value * 0.00028089887;
+            // printf("ADC1 Channel%d Reading : %d, Voltage value :%.4f\r\n", i, ADC_Value, ADC_Value * 3.3f / 4096);
+        }
+        gesture = 5;
+        for (i = 0; i < 5; i++)
+        {
+            if (ADC[i] > 2000)
             {
-                ADC_Value = HAL_ADC_GetValue(&hadc1);  // 获取AD
-                printf("ADC1 Channel%d Reading : %d, Voltage value :%.4f\r\n", i, ADC_Value, ADC_Value * 3.3f / 4096);
+                gesture--;
             }
         }
+        // printf("%d,%d,%d,%d,%d,gesture=%d\n",ADC[0],ADC[1],ADC[2],ADC[3],ADC[4],gesture);
+        printf("%fV,%fV,%fV,%fV,%fV,gesture=%d\n", voltage[0], voltage[1], voltage[2], voltage[3], voltage[4], gesture);
         HAL_ADC_Stop(&hadc1);
-        HAL_Delay(1000);
+        // HAL_Delay(500);
     }
     /* USER CODE END 3 */
 }
